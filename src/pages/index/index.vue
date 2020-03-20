@@ -1,142 +1,16 @@
 <template>
   <div class="index">
-    <div @click="toMappage" class="map_location">{{cityName}}</div>    
-    <div class="search">
-      <div @click="toSearch">
-        <input type="text" placeholder="搜索商品">
-        <span class="icon"></span>
-      </div>
-    </div>
-    <div class="swiper">
-      <swiper class="swiper-container" indicator-dots="true" autoplay="true" interval="3000" circular="true" duration="500">
-        <block v-for="(item, index) in banner " :key="index">
-          <swiper-item class="swiper-item">
-            <image :src="item.image_url" class="slide-image" />
-          </swiper-item>
-        </block>
-      </swiper>
-    </div>
-    <div class="channel">
-      <div @click="categoryList(item.id)" v-for="(item, index) in channel" :key="index">
-        <img :src="item.icon_url" alt="">
-        <p>{{item.name}}</p>
-      </div>
-    </div>
-    <div class="brand">
-      <div @click="tobrandList" class="head">
-        品牌制造商直供
-      </div>
-      <div class="content">
-        <div @click="branddetail(item.id)" v-for="(item, index) in brandList" :key="index">
-          <div>
-            <p>{{item.name}}</p>
-            <p>{{item.floor_price}}元起</p>
-          </div>
-          <img :src="item.new_pic_url" alt="">
-        </div>
-      </div>
-    </div>
-    <div class="newgoods">
-      <div @click="goodsList('new')" class="newgoods-top">
-        <div class="top">
-          <p>新品首发</p>
-          <p>查看全部</p>
-        </div>
-      </div>
-      <div class="list">
-        <ul>
-          <scroll-view class="scroll-view" :scroll-x="true">
-            <li @click="goodsDetail(item.id)" v-for="(item, index) in newGoods" :key="index">
-              <img :src="item.list_pic_url" alt="">
-              <p>{{item.name}}</p>
-              <p>{{item.goods_brief}}</p>
-              <p>￥{{item.retail_price}}</p>
-            </li>
-          </scroll-view>
-        </ul>
-      </div>
-    </div>
-    <div class="newgoods hotgoods">
-      <div @click="goodsList('hot')" class="newgoods-top">
-        <div class="top">
-          <p>人气推荐
-            <span></span> 好物精选</p>
-          <p>查看全部</p>
-        </div>
-      </div>
-      <div class="list">
-        <ul>
-          <scroll-view class="scroll-view" :scroll-x="true">
-            <li @click="goodsDetail(item.id)" v-for="(item, index) in hotGoods" :key="index">
-              <img :src="item.list_pic_url" alt="">
-              <p>{{item.name}}</p>
-              <p>{{item.goods_brief}}</p>
-              <p>￥{{item.retail_price}}</p>
-            </li>
-          </scroll-view>
-        </ul>
-      </div>
-    </div>
-    <div class="topicList">
-      <div @click="totopic" class="topicList-top">
-        专题精选
-        <span class="icon"></span>
-      </div>
-      <div class="list">
-        <ul>
-          <scroll-view class="scroll-view" :scroll-x="true">
-            <li @click="topicdetail(item.id)" v-for="(item, index) in topicList" :key="index">
-              <img :src="item.item_pic_url" alt="">
-              <div class="btom">
-                <div>
-                  <p>{{item.title}}</p>
-                  <p>{{item.subtitle}}</p>
-                </div>
-                <div>
-                  {{item.price_info}}元起
-                </div>
-              </div>
-            </li>
-          </scroll-view>
-        </ul>
-      </div>
-    </div>
-    <div class="newcategory">
-      <div class="list" v-for="(item, index) in newCategoryList" :key="index">
-        <div class="head">{{item.name}}好物</div>
-        <div class="sublist">
-          <div @click="goodsDetail(subitem.id)" v-for="(subitem, subindex) in item.goodsList" :key="subindex">
-            <img :src="subitem.list_pic_url" alt="">
-            <p>{{subitem.name}}</p>
-            <p>￥{{subitem.retail_price}}</p>
-          </div>
-          <div @click="categoryList(item.id)">
-            <div class="last">
-              <p>{{item.name}}好物</p>
-              <span class="icon"></span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <p>首页55555</p>
+    <!-- <van-button type="primary">按钮</van-button> -->
+    <button @click="goBack">返回登录页</button>
   </div>
 </template>
 
 <script>
-import amapFile from "../../utils/amap-wx";
-import { API } from '@/api';
-import { mapState, mapMutations } from "vuex";
 export default {
-  onShow() {
-  },
-  computed: {
-    ...mapState(["cityName"])
-  },
-  mounted() {
-    this.getCityName();
-    this.getData();
-    this.getUserInfo();
-  },
+  onShow() {},
+
+  mounted() {},
   data() {
     return {
       banner: [],
@@ -150,19 +24,23 @@ export default {
   },
   components: {},
   methods: {
-    ...mapMutations(["update"]),
-     getUserInfo:function(cb){
-      var that = this
+    goBack() {
+      wx.redirectTo({
+        url: "../login/main"
+      });
+    },
+    getUserInfo: function(cb) {
+      var that = this;
       wx.login({
-        success: function () {
+        success: function() {
           wx.getUserInfo({
-            success: function (res) {
+            success: function(res) {
               that.$storage.set("userInfo", res.userInfo);
             }
-          })
+          });
         }
-      })
-   },
+      });
+    },
     toMappage() {
       var _this = this;
       // 可以通过 wx.getSetting 先查询一下用户是否授权了 "scope.record" 这个 scope
@@ -189,14 +67,14 @@ export default {
         key: "e545e7f79a643f23aef187add14e4548"
       });
       myAmapFun.getRegeo({
-        success: function (data) {
+        success: function(data) {
           //成功回调
           console.log(data);
           // data[0].regeocodeData.formatted_address
           // _this.cityName = data[0].regeocodeData.formatted_address;
           _this.update({ cityName: data[0].regeocodeData.formatted_address });
         },
-        fail: function (info) {
+        fail: function(info) {
           //失败回调
           console.log(info);
           //如果用户拒绝授权
@@ -210,18 +88,6 @@ export default {
       wx.navigateTo({
         url: "/pages/search/main"
       });
-    },
-    async getData() {
-      const data = API.getListData().then(res=>{
-         this.banner = res.banner;
-          this.channel = res.channel;
-          this.brandList = res.brandList;
-          this.newGoods = res.newGoods;
-          this.hotGoods = res.hotGoods;
-          this.topicList = res.topicList;
-          this.newCategoryList = res.newCategoryList;
-      });
-     
     },
     goodsDetail(id) {
       wx.navigateTo({
@@ -265,7 +131,7 @@ export default {
       });
     }
   },
-  created() { }
+  created() {}
 };
 </script>
 

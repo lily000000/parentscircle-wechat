@@ -1,71 +1,33 @@
-import Flyio from 'flyio/dist/npm/wx.js'; // 请求拦截
 import Loading from "./gloading";
+import { authBeforeRes } from './interceptor';
 const gloading = new Loading({ sync: true });
-
-const requestInterceptors = (request) => {
-  gloading.start();
-  // 添加自定义的一些 http 请求参数等
-  // 给所有请求添加自定义header
-  // request.headers['token'] = token
-  // request.body = qs.stringify(request.body)
-  return request;
-};
-const responseInterceptors = { // 响应拦截
-  response: (response) => {
-    gloading.stop();
-    // 可能是下拉刷新调用接口，那么直接停止下拉刷新动画
-    wx.stopPullDownRefresh();
-    // 判断 api 返回内容进行异常提示或错误上报等
-    return response;
-  },
-  error: (error) => {
-    wx.stopPullDownRefresh();
-    // 错误提示和上报等
-    const { status, message } = error;
-
-    if (status === 0) {
-      // 网络异常
-    }
-
-    if (status !== 200) {
-      // 请求异常
-      // wx.redirectTo({
-      //   url: "/pages/login"
-      // });
-    }
-
-    if (message.indexOf('timeout') > -1) {
-      // 请求超时
-    }
-    throw new Error(error);
-  },
-};
+import storage from '@/utils/storage';
+import { Decrypt, Encrypt } from "./cryptoJS";
 class Reqeust {
   constructor(options) {
     this.options = options;
     this.defaultConfig = {
-      // baseURL:, // base url
-      // timeout: 3000, // timeout milliseconds
-      // headers: options.headers,
+      // baseURL:'http://172.36.171.59:8800/', // base url
+      baseURL: 'https://yaoyang.imdo.co', // base url
+      // baseURL: "http://28y853m626.wicp.vip:50886",
+      headers: {
+        'content-type': 'application/json', // 默认值
+        'token': wx.getStorageSync('token')
+      },
     };
-
-    this.fly = new Flyio();
-
-    this.fly.interceptors.request.use(requestInterceptors);
-    this.fly.interceptors.response.use(responseInterceptors.response, responseInterceptors.error);
   }
-  get(url, params) { 
+  get(url, params) {
     let options = { method: 'GET' }
     let req_url = params ? this.buildUrl(url, params) : url;
     return this.send(req_url, options)
   }
 
-  post(url, data) { 
+  post(url, data) {
     let options = { method: 'POST', headers: { "content-type": "application/json;charset=UTF-8" } }
     if (data) options.body = JSON.stringify(data)
     return this.send(url, options)
   }
-  delete(url, params) { 
+  delete(url, params) {
     let options = { method: 'DELETE' }
     let req_url = params ? this.buildUrl(url, params) : url;
     return this.send(req_url, options)
@@ -111,7 +73,76 @@ class Reqeust {
     const config = Object.assign({}, this.defaultConfig);
     config.method = options.method || 'GET';
     config.params = options.params || {};
-    return this.fly.request(path, options.data, config).then(response => response.data);
+    return this.request(path, options.data, config).then(response => response);
+  }
+  request(url, data, config = {}) {
+    gloading.start();
+    return new Promise((resolve, reject) => {
+      const { headers = {} } = config;
+      wx.request({
+        url: this.defaultConfig.baseURL + url,
+        ...config,
+        header: Object.assign({}, headers, this.defaultConfig.headers),
+        success: res => {
+          // try {
+          //   res.data = JSON.parse(Decrypt(res.data));
+          // }
+          // catch (e) {
+          //   console.log(1111)
+          // }
+          // console.log(66666,res.data)
+          // switch (res.data.status) {
+          //   case 200:
+          //     console.log(77777, res)
+          //     resolve(res.data);
+          //     return;
+          //   case 302:
+          //     wx.showToast({
+          //       icon: "none",
+          //       mask: true,
+          //       title: res.data.message,
+          //       duration: 3000
+          //     });
+          //     wx.redirectTo({
+          //       url: "../login/main"
+          //     });
+          //     wx.removeStorageSync("token");
+          //     return;
+          //   case 401:
+          //     wx.redirectTo({
+          //       url: "../login/main"
+          //     });
+          //     wx.removeStorageSync("token");
+          //     return;
+          //   case 403:
+          //     wx.redirectTo({
+          //       url: "../login/main"
+          //     });
+          //     wx.removeStorageSync("token");
+          //     return;
+          //   default:
+          //     wx.showToast({
+          //       icon: "none",
+          //       mask: true,
+          //       title: res.data.msg,
+          //       duration: 3000
+          //     });
+          //     return;
+          // }
+          authBeforeRes(res);
+          resolve(res.data);
+
+        },
+        fail: function (error) {
+          reject(false)
+        },
+        complete: function () {
+          setTimeout(() => {
+            gloading.stop();;
+          }, 300);
+        }
+      })
+    })
   }
 }
 

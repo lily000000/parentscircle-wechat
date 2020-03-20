@@ -1,6 +1,41 @@
+
 <script>
+import store from '@/store';
+import { mapState, mapActions, mapMutations } from "vuex";
 export default {
-  created () {
+  onLaunch: function() {
+    // if (wx.getStorageSync("token")) {
+    //   wx.switchTab({
+    //     url: "pages/index/main"
+    //   })    
+    // }
+  },
+  onShow() {
+    wx.login({
+      timeout: 10000,
+      success: result => {
+        const params = {
+          code: result.code
+        };
+        this.$API.getOpenId(params).then(res => {
+            console.log(2222444, res);
+          const { data, msg, status } = res;
+          if (status == 200) {
+            this.$store.commit("OPENID", data.openid);
+            this.$store.commit("SESSIONKEY", data.session_key);
+          }
+        });
+      },
+      fail: () => {},
+      complete: () => {}
+    });
+  if (wx.getStorageSync("token")) {
+      wx.switchTab({
+        url: "/pages/index/main"
+      })    
+    }
+  },
+  created() {
     // 调用API从本地缓存中获取数据
     /*
      * 平台 api 差异的处理方式:  api 方法统一挂载到 mpvue 名称空间, 平台判断通过 mpvuePlatform 特征字符串
@@ -9,25 +44,9 @@ export default {
      * 百度：mpvue === swan, mpvuePlatform === 'swan'
      * 支付宝(蚂蚁)：mpvue === my, mpvuePlatform === 'my'
      */
-
-    let logs
-    if (mpvuePlatform === 'my') {
-      logs = mpvue.getStorageSync({key: 'logs'}).data || []
-      logs.unshift(Date.now())
-      mpvue.setStorageSync({
-        key: 'logs',
-        data: logs
-      })
-    } else {
-      logs = mpvue.getStorageSync('logs') || []
-      logs.unshift(Date.now())
-      mpvue.setStorageSync('logs', logs)
-    }
-  },
-  log () {
-    console.log(`log at:${Date.now()}`)
+    console.log(this.$store.state.global.code);
   }
-}
+};
 </script>
 
 <style>

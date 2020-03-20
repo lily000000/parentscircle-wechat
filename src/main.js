@@ -6,10 +6,11 @@ import promisify from '@/utils/promisify';
 import storage from '@/utils/storage';
 import MyPlugin from './minxins';
 import MpvueRouterPatch from 'mpvue-router-patch';
-
+import sandBox from './utils/common'
+import { API } from '@/api';
 // 运行时错误和 promise 错误提示
-require('core-js/library/modules/_global.js').console = console;
-require('core-js/library/modules/_global.js').onunhandledrejection = console.errror
+// require('core-js/library/modules/_global.js').console = console;
+// require('core-js/library/modules/_global.js').onunhandledrejection = console.errror
 
 //全局处理重复页面跳转详情初始化,和详情跳详情返回的bug
 Vue.use(MpvueRouterPatch);
@@ -20,7 +21,8 @@ Vue.prototype.$promisify = promisify;
 Vue.prototype.$storage = storage;
 Vue.prototype.$wx = wx;
 Vue.prototype.$store = store;
-
+Vue.prototype.$API = API;
+Vue.prototype.$sandBox = sandBox;
 Vue.config.productionTip = false
 
 const app = new Vue({

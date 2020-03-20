@@ -1,9 +1,22 @@
 {
-  "pages": ["pages/index/main", "pages/logs/main", "pages/counter/main","pages/my/main"],
+  "pages": [
+    "pages/index/main",
+    "pages/find/main",
+    "pages/logs/main",
+    "pages/counter/main",
+    "pages/my/main",
+    "pages/home/main",
+    "pages/login/main",
+    "pages/userAgreement/main",
+    "pages/privacyThat/main",
+    "pages/phoneRegistration/main",
+    "pages/authorizationCode/main"
+    
+  ],
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "Mr.皮",
+    "navigationBarTitleText": "星卢家长圈",
     "navigationBarTextStyle": "black"
   },
   "tabBar": {
@@ -22,19 +35,13 @@
         "pagePath": "pages/logs/main",
         "iconPath": "static/images/ic_menu_topic_nor.png",
         "selectedIconPath": "static/images/ic_menu_topic_pressed.png",
-        "text": "专题"
+        "text": "找服务"
       },
       {
-        "pagePath": "pages/counter/main",
-        "iconPath": "static/images/ic_menu_sort_nor.png",
-        "selectedIconPath": "static/images/ic_menu_sort_pressed.png",
-        "text": "分类"
-      },
-      {
-        "pagePath": "pages/counter/main",
-        "iconPath": "static/images/ic_menu_shoping_nor.png",
-        "selectedIconPath": "static/images/ic_menu_shoping_pressed.png",
-        "text": "购物车"
+        "pagePath": "pages/find/main",
+        "iconPath": "static/images/ic_menu_topic_nor.png",
+        "selectedIconPath": "static/images/ic_menu_topic_pressed.png",
+        "text": "发现"
       },
       {
         "pagePath": "pages/my/main",
